@@ -9,10 +9,11 @@ const userSchema = new mongoose.Schema({
     email:{type: String, required:true},
     password:{type: String, required:true},
     role: { type: String, required: true },
+    dblStructure: { type: String, required: true },
 });
 
 userSchema.methods.generateAuthToken = function () {
-    const token = jwt.sign({ _id: this._id, role: this.role }, process.env.JWTPRIVATEKEY, { expiresIn: "7d" });
+    const token = jwt.sign({ _id: this._id, role: this.role, dblStructure: this.dblStructure }, process.env.JWTPRIVATEKEY, { expiresIn: "7d" });
     return token;
 };
 
@@ -26,6 +27,7 @@ const validate = (data) =>{
         email: Joi.string().email().required().label('Email'),
         password: passwordComplexity().required().label('Password'),
         role: Joi.string().required().label('Role'),
+        dblStructure: Joi.string().required().label('dblStructure')
     });
     return schema.validate(data);
 };
