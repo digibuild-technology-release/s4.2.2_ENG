@@ -7,6 +7,10 @@ const db = require("./db");
 const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const fetch = require('node-fetch');
+const axios = require('axios');
+const historicalData = require('./pages/historicalData')
+const FormData = require('form-data');
+const fs = require('fs');
 
 //const offersRoutes = require('./routes/offers'); //collegamento api offers
 
@@ -29,67 +33,59 @@ app.use(cors());
 // routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use(historicalData);
 
-/* const keycloakClientCredentials = {
-  clientId: 'access-control',
-  clientSecret: 'C67e5kVTzVzQbWEGn1CD6faPPw4x7o0K',
-  username: 'admin',
-  password: 'admin',
-  tokenUrl: 'http://digibuild.epu.ntua.gr/auth/realms/DIGIBUILD/protocol/openid-connect/token',
-};
-// Funzione per ottenere un token di accesso utilizzando le credenziali client
-const getAccessToken = async () => {
-  try {
-    const response = await fetch(keycloakClientCredentials.tokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `grant_type=client_credentials&client_id=${keycloakClientCredentials.clientId}&client_secret=${keycloakClientCredentials.clientSecret}`,
-    });
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      console.log('Error response from Keycloak:', errorResponse);
-      throw new Error('Failed to obtain access token');
+async function postData() {
+    try {
+      const response = await fetch('https://api.digibuild-demo.eu/fvh_predict', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          // Aggiungi eventuali altre intestazioni qui
+        },
+        body: JSON.stringify({
+          // Inserisci qui eventuali dati da inviare nel corpo della richiesta
+        })
+      });
+  
+      const responseData = await response.json();
+      console.log('Risposta:', responseData);
+    } catch (error) {
+      console.error('Si è verificato un errore:', error);
     }
-    const data = await response.json();
-    console.log('Access token:', data.access_token);
-    return data.access_token;
-  } catch (error) {
-    console.error('Error in getAccessToken:', error);
-    throw error;
-  }
-};
+    /*try {
+    console.log('ciao')
+     // Read the file as a stream
+     const fileStream = fs.createReadStream('input_fvh_api.csv');
 
-getAccessToken();
+    // Create a formData object and append the file to it
+    const formData = new FormData();
+    formData.append('file', fileStream);
 
+    // Define the headers
+    const headers = {
+      'Accept': 'application/json',
+      ...formData.getHeaders() // Ottieni gli header da FormData, includendo il boundary
+    }; 
 
-app.get("/api/chartDateTimeEnergiot", async (req, res) => { //esecuzione della query con i dati presi dal front-end
-  try {
-    const accessToken = await getAccessToken();
-    console.log(' 2 Access token:', accessToken);
-    const apiUrl = 'http://172.16.1.9:30631/device-indexing/get_last_n_records/ASM03000006?last_n=144' 
-    console.log("apiurl", apiUrl)
-    const response = await fetch(apiUrl, {
-      headers: {
-        'Fiware-Service': 'energy',
-        'Fiware-ServicePath': '/',
-        'token': accessToken, //tipi di token, io usavo authotìrized
-      },
+    const response = await fetch('https://api.digibuild-demo.eu/calculate_comfort_fvh', {
+      method: 'POST',
     });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  
     const data = await response.json();
-    console.log(data); // Dati ricevuti dall'API
-    return res.status(201).send(data);
+    console.log('Response:', data);
+  
   } catch (error) {
-    console.error(error);
-  }
-});
- */
+    console.error('Error:', error);
+  }*/
+}
 
+//postData();
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
-
-
-
 

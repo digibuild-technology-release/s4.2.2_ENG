@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digibuild-logbook-deployment
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: digibuild-logbook
+  template:
+    metadata:
+      labels:
+        app: digibuild-logbook
+    spec:
+      containers:
+      - name: digibuild-logbook
+        image: giurbinati/digibuild:dbl-backend
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: digibuild-logbook-service
+spec:
+  selector:
+    app: digibuild-logbook
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
