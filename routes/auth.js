@@ -1,36 +1,44 @@
-const router = require('express').Router();
-const {User}= require('../models/user');
-const Joi = require("joi"); 
-const bcrypt= require("bcrypt");
+const express = require('express');
+const router = express.Router();
+const fetch = require('node-fetch');
+require('dotenv').config();
 
-router.post("/login",async(req,res)=>{ 
+
+const keycloakClientCredentials = {
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    tokenUrl: process.env.TOKEN_URL,
+};
+
+
+router.post("/login", async (req, res) => {
     try {
-        const {error} = validate(req.body);
-        if (error)
-            return res.status(400).send({message:error.details[0].message});
+        const username = req.body.email;
+        const password = req.body.password;
+        //console.log(username)
+        //console.log(password)
 
-        const user = await User.findOne({email: req.body.email})
-        if (!user)
-            return res.status(401).send({message:"Invalid Email or Password"});
+        const response = await fetch(keycloakClientCredentials.tokenUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `grant_type=password&client_id=${keycloakClientCredentials.clientId}&client_secret=${keycloakClientCredentials.clientSecret}&clear&username=${username}&password=${password}`,
+        });
 
-        const validPassword = await bcrypt.compare(
-            req.body.password, user.password
-        );
-        if (!validPassword)
-            return res.status(401).send({message:"Invalid Email or Password"});
-        const token = user.generateAuthToken();
+        if (!response.ok) {
+            const errorResponse = await response.json();
+            console.log('Error response from Keycloak:', errorResponse);
+            return res.status(401).send({ message: 'Failed to obtain access token' });
+        }
+
+        const token = await response.json();
+        console.log('Access token:', token);
         res.status(200).send({data:token,message:"Logged in successfully"});
-
     } catch (error) {
-        res.status(500).send({message:"Intern Server Error"});
+        console.error('Error in getAccessToken:', error);
+        res.status(500).send({ message: 'Internal Server Error' });
     }
-})
-const validate = (data) =>{
-    const schema = Joi.object({
-        email:Joi.string().email().required().label("Email"),
-        password: Joi.string().required().label("Password")
-    });
-    return schema.validate(data);
-}
+});
 
 module.exports = router;

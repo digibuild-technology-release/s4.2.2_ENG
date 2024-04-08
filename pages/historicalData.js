@@ -11,7 +11,7 @@ const keycloakClientCredentials = {
     tokenUrl: process.env.TOKEN_URL,
 };
 
-const username = process.env.USERNAME;
+const username = 'g.urbinati';
 const password = process.env.PASSWORD;
 
 // Funzione per ottenere un token di accesso utilizzando le credenziali client

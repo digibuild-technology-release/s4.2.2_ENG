@@ -3,24 +3,12 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const db = require("./db");
-const userRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const fetch = require('node-fetch');
 const axios = require('axios');
 const historicalData = require('./pages/historicalData')
 const FormData = require('form-data');
 const fs = require('fs');
-
-//const offersRoutes = require('./routes/offers'); //collegamento api offers
-
-
-//const sqlRoutes = require('./routes/sql')
-//const dbSql = require('./dbSql')
-
-
-//database connection
-//db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 
 //middlewares
@@ -31,11 +19,10 @@ app.use(bodyParser.urlencoded({
 app.use(cors());
 
 // routes
-app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use(historicalData);
 
-async function postData() {
+/*async function postData() {
     try {
       const response = await fetch('https://api.digibuild-demo.eu/fvh_predict', {
         method: 'POST',
@@ -81,8 +68,8 @@ async function postData() {
   
   } catch (error) {
     console.error('Error:', error);
-  }*/
-}
+  }
+}*/
 
 //postData();
 
