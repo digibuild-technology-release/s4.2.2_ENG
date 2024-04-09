@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config()
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -70,7 +70,6 @@ app.use(historicalData);
     console.error('Error:', error);
   }
 }*/
-
 //postData();
 
 const port = process.env.PORT || 8080;

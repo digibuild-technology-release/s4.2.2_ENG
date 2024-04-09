@@ -9,22 +9,22 @@ const keycloakClientCredentials = {
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     tokenUrl: process.env.TOKEN_URL,
+    username: process.env.USERNAMEKEYCLOACK,
+    password: process.env.PASSWORD
 };
-
-const username = 'g.urbinati';
-const password = process.env.PASSWORD;
 
 // Funzione per ottenere un token di accesso utilizzando le credenziali client
 const getAccessToken = async () => {
     try {
-        console.log(username)
-console.log(keycloakClientCredentials.clientId)
+        console.log(keycloakClientCredentials.username)
+        console.log(keycloakClientCredentials.password)
+        console.log(keycloakClientCredentials.clientId)
         const response = await fetch(keycloakClientCredentials.tokenUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `grant_type=password&client_id=${keycloakClientCredentials.clientId}&client_secret=${keycloakClientCredentials.clientSecret}&clear&username=${username}&password=${password}`,
+            body: `grant_type=password&client_id=${keycloakClientCredentials.clientId}&client_secret=${keycloakClientCredentials.clientSecret}&clear&username=${keycloakClientCredentials.username}&password=${keycloakClientCredentials.password}`,
         });
         if (!response.ok) {
             const errorResponse = await response.json();
